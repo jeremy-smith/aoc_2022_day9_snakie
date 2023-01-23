@@ -1,11 +1,12 @@
 package main
 
 import (
-	"github.com/nsf/termbox-go"
 	"math"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/nsf/termbox-go"
 )
 
 func handleInput(wg *sync.WaitGroup, dir chan<- string, exitChan chan<- int) {
@@ -63,9 +64,7 @@ func wormThings(wg *sync.WaitGroup, dirChan <-chan string, exitChan <-chan int) 
 		knots[0] = move(knots[0], dir)
 
 		for k := 1; k < ropeLen; k++ {
-			if !areAdjacent(knots[k-1], knots[k]) {
-				knots[k] = follow(knots[k-1], knots[k])
-			}
+			knots[k] = follow(knots[k-1], knots[k])
 		}
 
 		termbox.SetChar(int(knots[0].x), int(knots[0].y), '@')
@@ -81,7 +80,7 @@ func wormThings(wg *sync.WaitGroup, dirChan <-chan string, exitChan <-chan int) 
 func main() {
 	exitChan := make(chan int)
 
-	termbox.Init()
+	_ = termbox.Init()
 	dir := make(chan string)
 
 	wg := sync.WaitGroup{}
@@ -91,8 +90,7 @@ func main() {
 	go wormThings(&wg, dir, exitChan)
 
 	wg.Wait()
-	termbox.Flush()
+	_ = termbox.Flush()
 	termbox.Close()
 	os.Exit(0)
-
 }
